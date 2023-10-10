@@ -1,3 +1,7 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
 struct Attaque {
     std::string nom;
     std::string description;
@@ -25,12 +29,14 @@ public:
 
     // Méthode pour afficher les informations du Pokémon
     void afficherInfo() {
+        std::cout << "\n" << std::endl;
         std::cout << "Nom : " << nom << std::endl;
         std::cout << "Vie : " << vie << std::endl;
         std::cout << "Type : " << type << std::endl;
         std::cout << "Attaques : " << std::endl;
         for (const Attaque& attaque : attaques) {
-            std::cout << "  - " << attaque.nom << " (" << attaque.degats << " dégâts)" << std::endl;
+            std::cout << "  - " << attaque.nom << " (" << attaque.degats << " degats)" << std::endl;
         }
+        std::cout << "\n" << std::endl;
     }
 };

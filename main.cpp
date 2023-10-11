@@ -10,12 +10,8 @@ void afficherListePokemon(const std::vector<Pokemon>& pokemonList) {
 }
 
 int main() {
-    std::string joueur1, joueur2;
-    std::cout << "Joueur 1, veuillez entrer votre prenom : ";
-    std::cin >> joueur1;
-    std::cout << "Joueur 2, veuillez entrer votre prenom : ";
-    std::cin >> joueur2;
 
+    // INITIALISATION DES POKEMON --------------------------------------------------------------------------------------------------------------------------------
     std::vector<Pokemon> availablePokemon;
     availablePokemon.push_back(Pokemon("Salameche", 100, "Feu"));
     availablePokemon.push_back(Pokemon("Bulbizarre", 100, "Plante"));
@@ -52,52 +48,60 @@ int main() {
     availablePokemon.push_back(Pokemon("Musteflott", 100, "Eau"));
     availablePokemon.push_back(Pokemon("Scarabrute", 100, "Insecte"));
 
+    // DEMANDE NOM JOUEUR --------------------------------------------------------------------------------------------------------------------------------
+    std::string joueur1, joueur2;
+    std::cout << "Joueur 1, veuillez entrer votre prenom : ";
+    std::cin >> joueur1;
+    std::cout << "Joueur 2, veuillez entrer votre prenom : ";
+    std::cin >> joueur2;
+
+    // INITIALISATION DES EQUIPE --------------------------------------------------------------------------------------------------------------------------------
     std::vector<Pokemon> equipeJoueur1;
     std::vector<Pokemon> equipeJoueur2;
 
-    // afficher la liste de Pokémon
+    // AFFICHE LA LISTE --------------------------------------------------------------------------------------------------------------------------------
     afficherListePokemon(availablePokemon);
 
+    // CHOIX POKEMON EQUIPE --------------------------------------------------------------------------------------------------------------------------------
+    std::cout << joueur1 << ", choisissez 3 Pokemon pour votre equipe :" << std::endl;
+    std::vector<std::string> equipeJoueur1Noms; // liste des noms des Pokémon dans l'équipe
 
-std::cout << joueur1 << ", choisissez 3 Pokemon pour votre equipe :" << std::endl;
-std::vector<std::string> equipeJoueur1Noms; // liste des noms des Pokémon dans l'équipe
+    for (int i = 0; i < 3; ++i) {
+        std::string nomPokemon;
+        std::cout << "Pokemon #" << (i + 1) << ": ";
+        std::cin >> nomPokemon;
 
-for (int i = 0; i < 3; ++i) {
-    std::string nomPokemon;
-    std::cout << "Pokemon #" << (i + 1) << ": ";
-    std::cin >> nomPokemon;
-
-    bool dejaDansEquipe = false;
+        bool dejaDansEquipe = false;
     
-    for (const std::string& nom : equipeJoueur1Noms) {
+        for (const std::string& nom : equipeJoueur1Noms) {
         // vérifier si le nom du pokemon est déjà dans l'équipe
-        if (nom == nomPokemon) {
-            dejaDansEquipe = true;
-            break;
-        }
-    }
-
-    if (dejaDansEquipe) {
-        std::cout << "Ce Pokemon est deja dans votre equipe. Choisissez un autre Pokemon." << std::endl;
-        --i; // 'i' pour revenir à la sélection du même Pokemon
-    } else {
-        bool pokemonValide = false;
-
-        for (const Pokemon& p : availablePokemon) {
-            if (p.nom == nomPokemon) {
-                equipeJoueur1.push_back(p);
-                equipeJoueur1Noms.push_back(p.nom);
-                pokemonValide = true;
-                break;
+            if (nom == nomPokemon) {
+                dejaDansEquipe = true;
+             break;
             }
         }
 
-        if (!pokemonValide) {
-            std::cout << "Le nom de Pokemon saisi n'est pas valide. Choisissez un Pokemon de la liste." << std::endl;
-            --i; //pour revenir à la sélection du même pok
+        if (dejaDansEquipe) {
+            std::cout << "Ce Pokemon est deja dans votre equipe. Choisissez un autre Pokemon." << std::endl;
+            --i; // 'i' pour revenir à la sélection du même Pokemon
+        } else {
+            bool pokemonValide = false;
+
+            for (const Pokemon& p : availablePokemon) {
+                if (p.nom == nomPokemon) {
+                    equipeJoueur1.push_back(p);
+                    equipeJoueur1Noms.push_back(p.nom);
+                    pokemonValide = true;
+                    break;
+                }
+            }
+
+            if (!pokemonValide) {
+                std::cout << "Le nom de Pokemon saisi n'est pas valide. Choisissez un Pokemon de la liste." << std::endl;
+                --i; //pour revenir à la sélection du même pok
+            }
         }
     }
-}
 
     std::cout << joueur2 << ", choisissez 3 Pokemon pour votre equipe :" << std::endl;
     for (int i = 0; i < 3; ++i) {
@@ -123,6 +127,8 @@ for (int i = 0; i < 3; ++i) {
     for (const Pokemon& p : equipeJoueur2) {
         p.afficherInfo();
     }
+
+    // DEBUT DU COMBAT --------------------------------------------------------------------------------------------------------------------------------
     
     return 0;
 }

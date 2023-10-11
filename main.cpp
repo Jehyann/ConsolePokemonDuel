@@ -11,23 +11,52 @@ void afficherListePokemon(const std::vector<Pokemon>& pokemonList) {
     }
 }
 
+// CHOISI LE PREMIER JOUEUR AU HASARD --------------------------------------------------------------------------------------------------------------------------------
 int randomPremierJoueur() {
-    // Générez un nombre aléatoire 0 ou 1
-    int joueurQuiCommence = std::rand() % 2;
+    int tourJoueur = std::rand() % 2;
 
     // Utilisez le résultat pour déterminer quel joueur commence
-    if (joueurQuiCommence == 0) {
+    if (tourJoueur == 0) {
         std::cout << "Le joueur 1 commence." << std::endl;
     } else {
         std::cout << "Le joueur 2 commence." << std::endl;
+    }
+    return tourJoueur;
+}
+
+// CHOISI LES DEGATS AU HASARD --------------------------------------------------------------------------------------------------------------------------------------
+// int randomDegats() {
+//     int degats = std::rand() % 30;
+//     std::cout << "Le pokemon a fait " << degats << " degats." << std::endl;
+
+//     return degats;
+// }
+// CHANGER LE POKEMON QUI FRONT --------------------------------------------------------------------------------------------------------------------------------------
+void changerPokemon(std::vector<Pokemon>& equipe) {
+    // Affiche la liste des Pokémon de l'équipe avec leurs indices
+    std::cout << "Choisissez le Pokemon avec lequel vous souhaitez echanger (1, 2, 3) : " << std::endl;
+    for (size_t i = 0; i < equipe.size(); ++i) {
+        std::cout << i + 1 << "- " << equipe[i].nom << std::endl;
+    }
+
+    int choixPokemon;
+    std::cin >> choixPokemon;
+
+    if (choixPokemon >= 1 && choixPokemon <= equipe.size()) {
+        // Échange le Pokémon actif avec le Pokémon choisi
+        std::swap(equipe[0], equipe[choixPokemon - 1]);
+        std::cout << "Vous avez echange votre Pokemon actif avec " << equipe[0].nom << "." << std::endl;
+    } else {
+        std::cout << "Choix de Pokemon non valide." << std::endl;
     }
 }
 
 
 int main() {
     // INITIALISATION DES POKEMON --------------------------------------------------------------------------------------------------------------------------------
-    Attaque attaqueCharge("Charge", "Charge l'ennemi.", 20);
-    Attaque attaqueViveAtt("Vive-attaque", "Effectue une attaque si rapide que son ennemi ne voit rien.", 20);
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
+    Attaque attaqueCharge("Charge", "Charge l'ennemi", 20);
+    Attaque attaqueViveAtt("Vive-attaque", "Effectue une attaque si rapide que son ennemi ne voit rien", 20);
 
     std::vector<Pokemon> availablePokemon;
     availablePokemon.push_back(Pokemon("Salameche", 100, "Feu"));
@@ -182,25 +211,75 @@ int main() {
     }
 
     // DEBUT DU COMBAT --------------------------------------------------------------------------------------------------------------------------------
-    randomPremierJoueur();
+    int tourJoueur = 0;
 
-
+    // BOUCLE -------------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+    std::string pokemonAllie;
+    std::string pokemonEnnemi;
+    
     while(true) {
+        // Demande ce que veux faire le joueur à chaque début de tour ----------------------------------------------------------------------------------- 
+        int choix;
+        int degats = 20;
 
+        // TOUR JOUEUR 1
+        if (tourJoueur == 0) {
+            std::cout << joueur1 << ", Qu'allez-vous faire ? (1) Attaquer (2) Changer de pokemon (passe le tour) (3) Passer le tour" << std::endl;
+            std::cin >> choix;
+            // Execute le choix -----------------------------------------------------------------------------------------------------------------------------
+            // Attaque
+            if (choix == 1) {
+                equipeJoueur2[0].vie -= degats;
+                std::cout << "Votre Pokemon a inflige " << degats << " degats au Pokemon ennemi." << std::endl;
+                tourJoueur = 1;
+
+            // Changement de pokemon
+            } else if (choix == 2) {
+                changerPokemon(equipeJoueur1);
+                std::cout << joueur1 << ", voici votre equipe à présent :" << std::endl;
+                for (const Pokemon& p : equipeJoueur1) {
+                    p.afficherInfo();
+                }
+                tourJoueur = 1;
+            // Passer le tour
+            } else if (choix == 3) {
+                tourJoueur = 1;
+            // Erreur prise en compte
+            } else {
+            std::cout << "Choix non valide. Veuillez choisir une action valide." << std::endl;
+            }
+        } 
+
+        // TOUR JOUEUR 2
+        else {
+            std::cout << joueur2 << ", Qu'allez-vous faire ? (1) Attaquer (2) Changer de pokemon (passe le tour) (3) Passer le tour" << std::endl;
+            std::cin >> choix;
+            // Execute le choix -----------------------------------------------------------------------------------------------------------------------------
+            // Attaque
+            if (choix == 1) {
+                equipeJoueur1[0].vie -= degats;
+                std::cout << "Votre Pokemon a inflige " << degats << " degats au Pokemon ennemi." << std::endl;
+                tourJoueur = 0;
+
+            // Changement de pokemon
+            } else if (choix == 2) {
+                changerPokemon(equipeJoueur2);
+                std::cout << joueur2 << ", voici votre equipe à présent :" << std::endl;
+                for (const Pokemon& p : equipeJoueur2) {
+                    p.afficherInfo();
+                }
+                tourJoueur = 0;
+            // Passer le tour
+            } else if (choix == 3) {
+                tourJoueur = 0;
+            // Erreur prise en compte
+            } else {
+            std::cout << "Choix non valide. Veuillez choisir une action valide." << std::endl;
+            }
+        }
     };
-
-    // if (equipeJoueur1[1].vie > 0 
-    //     && equipeJoueur1[2].vie > 0 
-    //     && equipeJoueur1[3].vie > 0
-    //     || equipeJoueur2[1].vie > 0 
-    //     && equipeJoueur2[2].vie > 0 
-    //     && equipeJoueur2[3].vie > 0) {
-
-    // } else {
-
-    // }
-
-
 
     return 0;
 }

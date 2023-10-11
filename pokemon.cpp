@@ -17,7 +17,7 @@ void Pokemon::afficherInfo() const {
     std::cout << "Type : " << type << std::endl;
     std::cout << "Attaques : " << std::endl;
     for (const Attaque& attaque : attaques) {
-        std::cout << "- " << attaque.nom << " (" << attaque.description << ", Degats : " << attaque.degats << ")" << std::endl;
+        std::cout << "- " << attaque.nom << " (" << attaque.description << ", degats : " << attaque.degats << ")" << std::endl;
     }
     std::cout << "\n" <<std::endl;
 }

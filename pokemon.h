@@ -1,4 +1,3 @@
-#pragma once
 #include <string>
 #include <vector>
 
@@ -11,7 +10,7 @@ struct Attaque {
 
 struct Pokemon {
     std::string nom;
-    int niveau;
+    int vie;
     std::string type;
     std::vector<Attaque> attaques;
     Pokemon(const std::string& _nom, int _niveau, const std::string& _type);

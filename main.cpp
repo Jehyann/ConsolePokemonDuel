@@ -13,45 +13,32 @@ void afficherListePokemon(const std::vector<Pokemon>& pokemonList) {
 
 // CHOISI LE PREMIER JOUEUR AU HASARD --------------------------------------------------------------------------------------------------------------------------------
 int randomPremierJoueur() {
-    int tourJoueur = std::rand() % 2;
-
-    // Utilisez le résultat pour déterminer quel joueur commence
-    if (tourJoueur == 0) {
-        std::cout << "Le joueur 1 commence." << std::endl;
-    } else {
-        std::cout << "Le joueur 2 commence." << std::endl;
-    }
-    return tourJoueur;
+    return std::rand() % 2;
 }
 
 // CHOISI LES DEGATS AU HASARD --------------------------------------------------------------------------------------------------------------------------------------
-// int randomDegats() {
-//     int degats = std::rand() % 30;
-//     std::cout << "Le pokemon a fait " << degats << " degats." << std::endl;
-
-//     return degats;
-// }
-// CHANGER LE POKEMON QUI FRONT --------------------------------------------------------------------------------------------------------------------------------------
-
+int randomDegats() {
+    int degats = 5 + (std::rand() % 31); 
+    return degats;
+}
 
 // CONDITION SORTIE WHILE EQUIPE MORTE -------------------------------------------------------------------------------------------------------------------------------
 bool equipeMorte(const std::vector<Pokemon>& equipe) {
     for (const Pokemon& p : equipe) {
-        if (p.vie != 0) {
-            return false;  // Au moins un Pokémon est en vie
+        if (p.vie > 0 ) {
+            return false;  // Si 1p en vie
         }
     }
-    return true;  // Aucun Pokémon n'est en vie
+    return true;  // Si 0p en vie
 }
 
 void changerPokemon(std::vector<Pokemon>& equipe) {
-    bool choixValide = false;
+    bool choixValide = false; // permet de sortir uniquement si le joueur a saisi un pokemon en vie
 
     while (!choixValide && !equipeMorte(equipe)) {
-        // Affiche la liste des Pokémon de l'équipe avec leurs indices
         std::cout << "Choisissez le Pokemon avec lequel vous souhaitez échanger (1, 2, 3) : " << std::endl;
         for (size_t i = 0; i < equipe.size(); ++i) {
-            std::cout << i + 1 << "- " << equipe[i].nom << std::endl;
+            std::cout << i + 1 << "# " << equipe[i].nom << std::endl;
         }
 
         int choixPokemon;
@@ -61,10 +48,10 @@ void changerPokemon(std::vector<Pokemon>& equipe) {
             if (equipe[choixPokemon - 1].vie <= 0) {
                 std::cout << "Ce Pokemon est KO et ne peut pas être sélectionné." << std::endl;
             } else {
-                // Échange le Pokémon actif avec le Pokémon choisi
+                // échange le pokémon actif [0] avec le pokémon choisi
                 std::swap(equipe[0], equipe[choixPokemon - 1]);
                 std::cout << "Vous avez échangé votre Pokémon actif avec " << equipe[0].nom << "." << std::endl;
-                choixValide = true;  // Sort de la boucle si le choix est valide
+                choixValide = true;
             }
         } else {
             std::cout << "Choix de Pokémon non valide." << std::endl;
@@ -231,87 +218,115 @@ int main() {
     }
 
     // DEBUT DU COMBAT --------------------------------------------------------------------------------------------------------------------------------
-    int tourJoueur = 0;
+    int tourJoueur = randomPremierJoueur();
+    if (tourJoueur == 0) {
+        std::cout << std::endl;
+        std::cout << joueur1 << " commence le combat !" << std::endl;
+        } else {
+        std::cout << std::endl;
+        std::cout << joueur2 << " commence le combat !" << std::endl;
+    }
 
     // BOUCLE -------------------------------------------------------------------------------------------------------------------------------------------
-    
     while(true) {
-        // Demande ce que veux faire le joueur à chaque début de tour ----------------------------------------------------------------------------------- 
         int choix;
-        int degats = 20;
+        int degats;
 
-        // TOUR JOUEUR 1
+        // TOUR JOUEUR 1 ---------------------------------------------------------------------------------------------------------------------------------
         if (tourJoueur == 0) {
             std::cout << joueur1 << ", Qu'allez-vous faire ? (1) Attaquer (2) Changer de pokemon (passe le tour) (3) Passer le tour" << std::endl;
             std::cin >> choix;
-            // Execute le choix -----------------------------------------------------------------------------------------------------------------------------
+
             // Attaque
             if (choix == 1) {
+                int degats = randomDegats();
                 equipeJoueur2[0].vie -= degats;
-                std::cout << "Votre Pokemon a inflige " << degats << " degats au Pokemon ennemi." << std::endl;
+                std::cout << equipeJoueur1[0].nom << " a fait " << degats << " degats a "<< equipeJoueur2[0].nom << "." << std::endl;
+                std::cout << equipeJoueur2[0].nom << " a maintenant " << equipeJoueur2[0].vie << " PV." << std::endl;
+                std::cout << std::endl;
 
-                if (equipeJoueur2[0].vie == 0 && !equipeMorte(equipeJoueur1)) {
+                if (equipeJoueur2[0].vie <= 0 && !equipeMorte(equipeJoueur1)) {
                     std::cout << "Oh non ! " << equipeJoueur2[0].nom << " est KO. " << std::endl;
+                    equipeJoueur2[0].vie = 0; // permet de set la vie à 0 et pas - de 0
                     changerPokemon(equipeJoueur2);
                 }
                 tourJoueur = 1;
+
             // Changement de pokemon
             } else if (choix == 2) {
+                std::cout << joueur1 << ", voici votre equipe actuelle :" << std::endl;
+                for (const Pokemon& p : equipeJoueur1) {
+                    p.afficherInfo();
+                }
                 changerPokemon(equipeJoueur1);
                 std::cout << joueur1 << ", voici votre equipe à présent :" << std::endl;
                 for (const Pokemon& p : equipeJoueur1) {
                     p.afficherInfo();
                 }
                 tourJoueur = 1;
+
             // Passer le tour
             } else if (choix == 3) {
                 tourJoueur = 1;
+
             // Erreur prise en compte
             } else {
             std::cout << "Choix non valide. Veuillez choisir une action valide." << std::endl;
             }
         } 
 
-        // TOUR JOUEUR 2
+        // TOUR JOUEUR 2 -----------------------------------------------------------------------------------------------------------------------------------
         else {
             std::cout << joueur2 << ", Qu'allez-vous faire ? (1) Attaquer (2) Changer de pokemon (passe le tour) (3) Passer le tour" << std::endl;
             std::cin >> choix;
-            // Execute le choix -----------------------------------------------------------------------------------------------------------------------------
+
             // Attaque
             if (choix == 1) {
+
+                int degats = randomDegats();
                 equipeJoueur1[0].vie -= degats;
-                std::cout << "Votre Pokemon a inflige " << degats << " degats au Pokemon ennemi." << std::endl;
-                if (equipeJoueur1[0].vie == 0 && !equipeMorte(equipeJoueur2)) {
+                std::cout << equipeJoueur2[0].nom << " a fait " << degats << " degats a "<< equipeJoueur1[0].nom << "." << std::endl;
+                std::cout << equipeJoueur1[0].nom << " a maintenant " << equipeJoueur1[0].vie << " PV." << std::endl;
+                std::cout << std::endl;
+
+                if (equipeJoueur1[0].vie <= 0 && !equipeMorte(equipeJoueur2)) {
                     std::cout << "Oh non ! " << equipeJoueur1[0].nom << " est KO. " << std::endl;
+                    equipeJoueur1[0].vie = 0; // permet de set la vie à 0 et pas - de 0
                     changerPokemon(equipeJoueur1);
                 }
                 tourJoueur = 0;
 
             // Changement de pokemon
             } else if (choix == 2) {
+                std::cout << joueur2 << ", voici votre equipe actuelle :" << std::endl;
+                for (const Pokemon& p : equipeJoueur2) {
+                    p.afficherInfo();
+                }
                 changerPokemon(equipeJoueur2);
                 std::cout << joueur2 << ", voici votre equipe à présent :" << std::endl;
                 for (const Pokemon& p : equipeJoueur2) {
                     p.afficherInfo();
                 }
                 tourJoueur = 0;
+
             // Passer le tour
             } else if (choix == 3) {
                 tourJoueur = 0;
+            
             // Erreur prise en compte
             } else {
             std::cout << "Choix non valide. Veuillez choisir une action valide." << std::endl;
             }
         }
 
-            // À la fin de chaque tour, vérifiez si l'une des équipes est morte.
+            // CONDITION DE FIN --------------------------------------------------------------------------------------------------------------------------------
         if (equipeMorte(equipeJoueur1) || equipeMorte(equipeJoueur2)) {
             if (equipeMorte(equipeJoueur1)) {
                 std::cout << joueur2 << " est le vainqueur !" << std::endl;
             } else if (equipeMorte(equipeJoueur2)) {
                 std::cout << joueur1 << " est le vainqueur !" << std::endl;
             }
-            break;  // Ferme la boucle si l'une des équipes est morte.
+            break;
         }
 
 

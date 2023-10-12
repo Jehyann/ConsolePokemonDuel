@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 #include "pokemon.h"
 
 void afficherListePokemon(const std::vector<Pokemon>& pokemonList) {
@@ -59,6 +60,10 @@ void changerPokemon(std::vector<Pokemon>& equipe) {
     }
 }
 
+bool comparateurParType(const Pokemon& a, const Pokemon& b) {
+    return a.type < b.type;
+}
+
 int main() {
     // INITIALISATION DES POKEMON --------------------------------------------------------------------------------------------------------------------------------
     std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -100,6 +105,8 @@ int main() {
     availablePokemon.push_back(Pokemon("Ponyta", 100, "Feu"));
     availablePokemon.push_back(Pokemon("Musteflott", 100, "Eau"));
     availablePokemon.push_back(Pokemon("Scarabrute", 100, "Insecte"));
+
+    std::sort(availablePokemon.begin(), availablePokemon.end(), comparateurParType);
 
     // DEMANDE NOM JOUEUR --------------------------------------------------------------------------------------------------------------------------------
     std::string joueur1, joueur2;
